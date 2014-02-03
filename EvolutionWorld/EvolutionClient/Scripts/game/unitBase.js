@@ -8,10 +8,11 @@
 			this.y = 0;
 			//TODO: figure out what to do with the scale
 			this.sprite = new Sprite(this.spriteName, 1);
-
+			this.sprite.setLabel(id);
 
 			var self = this;
 			this.sprite.onLoaded(function () {
+				this.showLabel(true);
 				self.onLoadedCallback();
 			})
 		},

@@ -9,10 +9,10 @@ requirejs.config({
 	//never includes a ".js" extension since
 	//the paths config could be for a directory.
 	paths: {
-		jquery: 'jquery-2.0.3',
+		jquery: 'jquery-2.1.0',
 		terminal: 'jquery.terminal-0.7.12',
-		//kinetic: 'kinetic-v5.0.1.min',
-		kinetic: 'kinetic-v4.4.3',
+		kinetic: 'kinetic-v5.0.1.min',
+		//kinetic: 'kinetic-v4.4.3',
 		signalr: 'jquery.signalR-2.0.1.min',
 		"signalr.hubs": 'http://localhost:9999/signalr/hubs?'
 	},

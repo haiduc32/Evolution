@@ -94,7 +94,6 @@
     <Content Include="index_.html" />
     <Content Include="packages.config" />
     <None Include="My Project\PublishProfiles\folder.pubxml" />
-    <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\class.js" />
     <Content Include="Scripts\game\game.js" />
     <Content Include="Scripts\game\gameCanvas.js" />
@@ -102,8 +101,9 @@
     <Content Include="Scripts\game\sprites.js" />
     <Content Include="Scripts\game\unitBase.js" />
     <Content Include="Scripts\game\villagerNpc.js" />
-    <Content Include="Scripts\jquery-2.0.3.js" />
-    <Content Include="Scripts\jquery-2.0.3.min.js" />
+    <None Include="Scripts\jquery-2.1.0.intellisense.js" />
+    <Content Include="Scripts\jquery-2.1.0.js" />
+    <Content Include="Scripts\jquery-2.1.0.min.js" />
     <Content Include="Scripts\jquery.signalR-2.0.1.js" />
     <Content Include="Scripts\jquery.signalR-2.0.1.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -163,8 +163,8 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-    <Content Include="Scripts\jquery-2.0.3.min.map" />
     <Content Include="Scripts\sprites\villager.json" />
+    <Content Include="Scripts\jquery-2.1.0.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

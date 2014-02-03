@@ -18,6 +18,29 @@
 
 			this.entitiesLayer = new Kinetic.Layer();
 
+			//this.image = new Image();
+			//this.image.src = "img/1/villager.png";
+
+			//this.image.onload = function () {
+			//	var kineticSprite = new Kinetic.Sprite({
+			//		x: self.offsetX / 2,
+			//		y: self.offsetY / 2,
+			//		image: self.image,
+			//		animation: "idle_down",
+			//		animations: {
+			//			idle_down: [
+			//				0,256,32,32,
+			//				32,256,32,32
+			//			]
+			//			},
+			//		frameRate: 2,
+			//		frameIndex: 0
+			//	});
+			//	kineticSprite.start();
+			//	self.entitiesLayer.add(kineticSprite);
+
+			//};
+
 			this.stage.add(this.entitiesLayer);
 
 			this.animation = new Kinetic.Animation(function (frame) {

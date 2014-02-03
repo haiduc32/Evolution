@@ -48,12 +48,24 @@
 				}));
 
 				tooltip.add(new Kinetic.Text({
-					text: 'Tooltip pointing down',
+					text: this.label,
 					fontFamily: 'Calibri',
-					fontSize: 18,
+					fontSize: 13,
 					padding: 5,
 					fill: 'white'
 				}));
+				
+				this.kineticLabel = tooltip;
+
+				//var simpleText = new Kinetic.Text({
+				//	x: this.x,
+				//	y: this.y,
+				//	text: 'Simple Text',
+				//	fontSize: 14,
+				//	fontFamily: 'Calibri',
+				//	fill: 'black'
+				//});
+				//this.kineticLabel = simpleText;
 
 				gameCanvas.addToCanvas(tooltip);
 			}
@@ -92,7 +104,7 @@
 					animation: self.animationState,
 					animations: self.kineticAnimation,
 					frameRate: 2,
-					index: 0
+					frameIndex: 0
 				});
 
 				gameCanvas.addSprite(self);
@@ -109,12 +121,11 @@
 			function transformAnimArray(animationType) {
 				var animArray = new Array();
 				for (i = 0; i < animationType.length; i++) {
-					animArray[i] = {
-						x: i * self.width,
-						y: animationType.row * self.height,
-						width: self.width,
-						height: self.height
-					};
+
+					animArray[i * 4] = i * self.width; //x
+					animArray[i * 4 + 1] = animationType.row * self.height; //y
+					animArray[i * 4 + 2] = self.width; //width
+					animArray[i * 4 + 3] = self.height; //height
 				}
 
 				return animArray;
@@ -168,7 +179,10 @@
 			/// <param name="y" type="Number">The y position on the layer (in pixels).</param>
 			var relX = x + this.offsetX / 2;
 			var relY = y + this.offsetY / 2;
-			this.kineticSprite.setPosition(relX, relY);
+			this.kineticSprite.position({ x: relX, y: relY });
+			if (this.showLabel) {
+				this.kineticLabel.position({ x: relX +16, y: relY });
+			}
 		},
 
 		startPath: function (path) {
