@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+	<style type="text/css">
+		#d {
+			width: 240px;
+			height: 240px;
+		}
+	</style>
+</head>
+<body>
+	<div id="d">
+		<canvas id="test"></canvas>
+	</div>
+	<script>
+		var entitiesCanvas = document.getElementById("test");
+		var entitiesContext = entitiesCanvas.getContext("2d");
+
+
+		entitiesContext.beginPath();
+		entitiesContext.rect(0, 0, 24, 24);
+		entitiesContext.fillStyle = 'yellow';
+		entitiesContext.stroke();
+	</script>
+</body>
+</html>

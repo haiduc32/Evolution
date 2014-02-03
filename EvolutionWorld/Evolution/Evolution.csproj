@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8860A202-8D62-4577-9BC4-1C73ACDD2E43}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Evolution</RootNamespace>
+    <AssemblyName>Evolution</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.14.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Tpl.Dataflow.4.5.14\lib\portable-net45+win8\System.Threading.Tasks.Dataflow.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Algorithms\AuthorAttribute.cs" />
+    <Compile Include="Algorithms\HighResolutionTime.cs" />
+    <Compile Include="Algorithms\IPathFinder.cs" />
+    <Compile Include="Algorithms\PathFinder.cs" />
+    <Compile Include="Algorithms\PathFinderFast.cs" />
+    <Compile Include="Algorithms\PriorityQueueB.cs" />
+    <Compile Include="Core\Logging\Logging.cs" />
+    <Compile Include="Core\Logging\LogStatisticsType.cs" />
+    <Compile Include="Core\Logging\LogSystem.cs" />
+    <Compile Include="Core\TimeKeeper.cs" />
+    <Compile Include="EngineActions\ActionBase.cs" />
+    <Compile Include="Engine.cs" />
+    <Compile Include="EngineActions\ActionType.cs" />
+    <Compile Include="EngineActions\IdleAction.cs" />
+    <Compile Include="Events\UnitBeginPathEventArgs.cs" />
+    <Compile Include="Events\UnitContinuePathEventArgs.cs" />
+    <Compile Include="Events\UnitEndPathEventArgs.cs" />
+    <Compile Include="ICommunicationUnit.cs" />
+    <Compile Include="IUnitEngineEvents.cs" />
+    <Compile Include="Location.cs" />
+    <Compile Include="EngineActions\MoveAction.cs" />
+    <Compile Include="Map.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Random.cs" />
+    <Compile Include="UnitBase.cs" />
+    <Compile Include="Events\UnitEventArgs.cs" />
+    <Compile Include="Events\UnitEndMoveEventArgs.cs" />
+    <Compile Include="Events\UnitBeginMoveEventArgs.cs" />
+    <Compile Include="UnitBeginRouteEventArgs.cs" />
+    <Compile Include="VillagerNpc.cs" />
+    <Compile Include="ZombieNpc.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Enums\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
