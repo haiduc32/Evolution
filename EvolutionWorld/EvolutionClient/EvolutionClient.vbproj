@@ -95,6 +95,7 @@
     <Content Include="packages.config" />
     <None Include="My Project\PublishProfiles\folder.pubxml" />
     <Content Include="Scripts\class.js" />
+    <Content Include="Scripts\game\evolutionConsole.js" />
     <Content Include="Scripts\game\game.js" />
     <Content Include="Scripts\game\gameCanvas.js" />
     <Content Include="Scripts\game\sprite.js" />

@@ -54,7 +54,7 @@ namespace EvolutionHost
 				Console.WriteLine("Server running on {0}", url);
 
 				HttpClient client = new HttpClient();
-				url = "http://partizan-server:9999";
+				//url = "http://partizan-server:9999";
 				var response = client.GetAsync(url + "/signalr/hubs").Result;
 				response = client.GetAsync(url + "/signalr/hubs").Result;
 

@@ -1,4 +1,4 @@
-﻿define(['kinetic'], function (kineticjs) {
+﻿define(['kinetic', 'game/evolutionConsole'], function (kineticjs, evolutionConsole) {
 	var GameCanvas = Class.extend({
 		init: function (containerName) {
 			var self = this;
@@ -18,29 +18,6 @@
 
 			this.entitiesLayer = new Kinetic.Layer();
 
-			//this.image = new Image();
-			//this.image.src = "img/1/villager.png";
-
-			//this.image.onload = function () {
-			//	var kineticSprite = new Kinetic.Sprite({
-			//		x: self.offsetX / 2,
-			//		y: self.offsetY / 2,
-			//		image: self.image,
-			//		animation: "idle_down",
-			//		animations: {
-			//			idle_down: [
-			//				0,256,32,32,
-			//				32,256,32,32
-			//			]
-			//			},
-			//		frameRate: 2,
-			//		frameIndex: 0
-			//	});
-			//	kineticSprite.start();
-			//	self.entitiesLayer.add(kineticSprite);
-
-			//};
-
 			this.stage.add(this.entitiesLayer);
 
 			this.animation = new Kinetic.Animation(function (frame) {
@@ -48,6 +25,18 @@
 					self.sprites[i].animate(frame);
 				}
 			}, this.entitiesLayer);
+
+			evolutionConsole.bind("show-labels", function (parameters) {
+				$.each(self.sprites, function (index, value) {
+					value.showLabel(true);
+				});
+			});
+
+			evolutionConsole.bind("hide-labels", function (parameters) {
+				$.each(self.sprites, function (index, value) {
+					value.showLabel(false);
+				});
+			});
 
 			this.animation.start();
 		},
@@ -95,7 +84,11 @@
 			this.backgroundLayer.draw();
 
 
-		}
+		},
+
+		showLabels: function (parameters) {
+
+		},
 	})
 
 	return new GameCanvas('canvas2');

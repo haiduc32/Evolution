@@ -24,7 +24,7 @@ requirejs.config({
 	}
 });
 
-require(['jquery', 'game/gameCanvas', 'game/game', 'class', 'terminal'], function (util, gameCanvas, Game) {
+require(['jquery', 'game/gameCanvas', 'game/game', 'game/evolutionConsole', 'class', 'terminal'], function (util, gameCanvas, Game, evolutionConsole) {
 	//This function is called when scripts/helper/util.js is loaded.
 	//If util.js calls define(), then this function is not fired until
 	//util's dependencies have loaded, and the util argument will hold
@@ -41,11 +41,11 @@ require(['jquery', 'game/gameCanvas', 'game/game', 'class', 'terminal'], functio
 				term.echo("you don't set eval for tilda");
 			};
 			var settings = {
-				prompt: 'tilda> ',
+				prompt: '> ',
 				name: 'tilda',
 				height: 100,
 				enabled: false,
-				greetings: 'Quake like console',
+				greetings: 'Evolution console',
 				keypress: function (e) {
 					if (e.which == 96) {
 						return false;
@@ -63,7 +63,9 @@ require(['jquery', 'game/gameCanvas', 'game/game', 'class', 'terminal'], functio
 			$(document.documentElement).keypress(function (e) {
 				if (e.charCode == 96) {
 					self.slideToggle('fast');
-					self.terminal.command_line.set('');
+					if (self.terminal.command_line !== undefined) {
+						self.terminal.command_line.set('');
+					}
 					self.terminal.focus(focus = !focus);
 				}
 			});
@@ -78,7 +80,15 @@ require(['jquery', 'game/gameCanvas', 'game/game', 'class', 'terminal'], functio
 			if (command == 'enablelogging') {
 				//TODO: show the rminal if it's not shown
 			}
-			terminal.echo('you type command "' + command + '"');
+
+			var handled = evolutionConsole.execute(command);
+
+			if (!handled) {
+				//the command was not found, show some error
+				terminal.error("Unknown command!")
+			}
+
+			//terminal.echo('you type command "' + command + '"');
 		});
 		$('#terminal').terminal(function (command, term) {
 			if (command == 'helo') {

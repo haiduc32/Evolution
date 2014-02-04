@@ -11,6 +11,8 @@
 
 			this.unitsList = [];
 
+
+
 			this.registerEvents();
 		},
 
@@ -73,6 +75,8 @@
 				});;
 			});
 		},
+
+
 
 		test: function () {
 

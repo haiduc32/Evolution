@@ -29,45 +29,42 @@
 		showLabel: function(show) {
 			this.isShowLabel = show;
 			if (show) {
+				var position = this.kineticSprite.position();
+				var x = position.x + 16;
+				var y = position.y;
+
 				var tooltip = new Kinetic.Label({
-					x: 170,
-					y: 75,
-					opacity: 0.75
+					x: x,
+					y: y,
+					opacity: 0.80
 				});
 
 				tooltip.add(new Kinetic.Tag({
 					fill: 'black',
 					pointerDirection: 'down',
-					pointerWidth: 10,
-					pointerHeight: 10,
+					pointerWidth: 6,
+					pointerHeight: 6,
 					lineJoin: 'round',
-					shadowColor: 'black',
-					shadowBlur: 10,
-					shadowOffset: { x: 10, y: 20 },
-					shadowOpacity: 0.5
+					//shadowColor: 'black',
+					//shadowBlur: 10,
+					//shadowOffset: { x: 10, y: 20 },
+					//shadowOpacity: 0.5
 				}));
 
 				tooltip.add(new Kinetic.Text({
 					text: this.label,
 					fontFamily: 'Calibri',
 					fontSize: 13,
-					padding: 5,
+					padding: 2,
 					fill: 'white'
 				}));
 				
 				this.kineticLabel = tooltip;
 
-				//var simpleText = new Kinetic.Text({
-				//	x: this.x,
-				//	y: this.y,
-				//	text: 'Simple Text',
-				//	fontSize: 14,
-				//	fontFamily: 'Calibri',
-				//	fill: 'black'
-				//});
-				//this.kineticLabel = simpleText;
-
 				gameCanvas.addToCanvas(tooltip);
+			}
+			else {
+				this.kineticLabel.remove();
 			}
 		},
 
@@ -180,8 +177,8 @@
 			var relX = x + this.offsetX / 2;
 			var relY = y + this.offsetY / 2;
 			this.kineticSprite.position({ x: relX, y: relY });
-			if (this.showLabel) {
-				this.kineticLabel.position({ x: relX +16, y: relY });
+			if (this.isShowLabel) {
+				this.kineticLabel.position({ x: relX + 16, y: relY });
 			}
 		},
 

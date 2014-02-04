@@ -12,7 +12,7 @@
 
 			var self = this;
 			this.sprite.onLoaded(function () {
-				this.showLabel(true);
+				//this.showLabel(true);
 				self.onLoadedCallback();
 			})
 		},
