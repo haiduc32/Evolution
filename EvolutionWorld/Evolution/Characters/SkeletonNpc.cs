@@ -42,7 +42,7 @@ namespace Evolution.Characters
 				
 			}
 			//if there is an unit worth attacking in range, attack it
-			else if (UnitsInRange)
+			//else if (UnitsInRange)
 
 			if (true)//!IsUnderAttack() && !IsAttacking() && !IsEnRoute())
 			{
