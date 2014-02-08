@@ -65,15 +65,6 @@
     <Content Include="fonts\graphicpixel-webfont.woff" />
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery-2.1.0.min.map" />
-    <Content Include="Scripts\main__.js">
-      <DependentUpon>main__.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Content>
-    <Content Include="Scripts\main__.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>main__.js</LastGenOutput>
-    </Content>
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\sprites\villager.json" />
     <None Include="Properties\PublishProfiles\testServer.pubxml" />
@@ -128,9 +119,9 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-	<Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
-	<Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
-	<ProjectExtensions>
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
