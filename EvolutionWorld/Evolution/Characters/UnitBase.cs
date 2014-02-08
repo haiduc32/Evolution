@@ -60,6 +60,8 @@ namespace Evolution.Characters
 
 		public int Id { get; set; }
 
+		protected List<UnitBase> UnitsInRange { get; private set; } 
+
 		#endregion properties
 
 		#region events
@@ -78,6 +80,15 @@ namespace Evolution.Characters
 
 		#endregion events
 
+		#region .ctor
+
+		public UnitBase()
+		{
+			UnitsInRange = new List<UnitBase>();
+		}
+
+		#endregion .ctor
+
 		#region engine events
 
 		/// <summary>
@@ -85,14 +96,15 @@ namespace Evolution.Characters
 		/// </summary>
 		public virtual void UnitInRange(UnitBase unit)
 		{
+			UnitsInRange.Add(unit);
 		}
 
 		/// <summary>
-		/// Engine event. Called when a unit gets out of range (or also if dies (confirm?)).
+		/// Engine event. Called when a unit gets out of range (or also if dies).
 		/// </summary>
 		public virtual void UnitOutOfRange(UnitBase unit)
 		{
-
+			UnitsInRange.Remove(unit);
 		}
 
 		/// <summary>
@@ -182,6 +194,8 @@ namespace Evolution.Characters
 
 
 		#endregion engine events
+
+
 
 		public bool AttackUnit(UnitBase unit)
 		{

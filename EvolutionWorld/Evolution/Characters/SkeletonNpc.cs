@@ -36,6 +36,14 @@ namespace Evolution.Characters
 
 			bool actionTaken = false;
 
+			//if attacking a unit
+			if (AttackedUnit != null)
+			{
+				
+			}
+			//if there is an unit worth attacking in range, attack it
+			else if (UnitsInRange)
+
 			if (true)//!IsUnderAttack() && !IsAttacking() && !IsEnRoute())
 			{
 				if (finishedAction == ActionType.Idle)
@@ -82,11 +90,17 @@ namespace Evolution.Characters
 		{
 			base.UnitInRange(unit);
 
-			if (unit is VillagerNpc) //TODO: or unit is a player
+			//if is attacking, then ignore any new units
+			if (AttackedUnit != null) return;
+
+			//if the new unit in range is a player or a villager npc, stop idling (supposedly)
+			//and attack it in the Ready() method
+			if (!unit.IsNpc || unit is VillagerNpc)
 			{
 				Engine.CancelAllActions(this);
-
 			}
 		}
+
+
 	}
 }

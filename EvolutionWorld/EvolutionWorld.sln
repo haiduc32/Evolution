@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evolution", "Evolution\Evol
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvolutionClient", "EvolutionClient\EvolutionClient.csproj", "{53FC774B-FDD1-4FB7-9CEF-464B3F67D2A7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{5342FFD4-3D16-4511-B93A-CFDB7396A6C5}"
+	ProjectSection(SolutionItems) = preProject
+		Build.proj = Build.proj
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
