@@ -49,25 +49,24 @@ namespace EvolutionHost
 			//TODO: should add only the new units here!
 			NewUnits(AllVillagers);
 			string hostUrl = System.Configuration.ConfigurationManager.AppSettings["hostUrl"];
-			
 
 			//start the hub
 			using (WebApp.Start(hostUrl))
 			{
 
-				Console.WriteLine("Server running on {0}", hostUrl);
+				//Console.WriteLine("Server running on {0}", hostUrl);
 
-				HttpClient client = new HttpClient();
-				//url = "http://partizan-server:9999";
-				var response = client.GetAsync(hostUrl + "/signalr/hubs").Result;
-				if (response.StatusCode != System.Net.HttpStatusCode.OK)
-				{
-					Console.WriteLine("Could not check that the port has been opened with success.");
-				}
-				else
-				{
-					Console.WriteLine("Running OK.");
-				}
+				//HttpClient client = new HttpClient();
+				////url = "http://partizan-server:9999";
+				//var response = client.GetAsync(hostUrl + "/signalr/hubs").Result;
+				//if (response.StatusCode != System.Net.HttpStatusCode.OK)
+				//{
+				//	Console.WriteLine("Could not check that the port has been opened with success.");
+				//}
+				//else
+				//{
+				//	Console.WriteLine("Running OK.");
+				//}
 
 
 
