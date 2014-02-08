@@ -1,4 +1,5 @@
-﻿using Evolution.Core;
+﻿using Evolution.Characters;
+using Evolution.Core;
 using Evolution.EngineActions;
 using System;
 using System.Collections.Concurrent;
@@ -129,6 +130,9 @@ namespace Evolution
 							actionBlock.Complete();
 							//wait for all the actions to be completed
 							actionBlock.Completion.Wait();
+
+							//now remove the list of actions because they have been processed
+							scheduledActionsDict.TryRemove(tick, out listOfActions);
 						}
 					}
 					catch (Exception e)
@@ -139,6 +143,8 @@ namespace Evolution
 
 			_timeKeeper.Start();
 		}
+
+		#region unit acttions
 
 		public bool ProcessIdle(UnitBase unit, int idleTicks)
 		{
@@ -154,7 +160,7 @@ namespace Evolution
 			return true;
 		}
 
-		public bool ProcessMove(UnitBase unit, List<Location> path)
+		public bool ProcessMove(UnitBase unit, Location nextLeg)
 		{
 			Debug.WriteLineIf(unit.Id == 0, "Engine: ProcessMove");
 			if (unitActionDict.ContainsKey(unit))
@@ -163,28 +169,36 @@ namespace Evolution
 				return false;
 			}
 
-			return ProcessMoveInternal(unit, new List<Location>(path));
+			return ProcessMoveInternal(unit, nextLeg);
 		}
 
+		public void CancelAllActions(UnitBase unit)
+		{
+
+		}
+
+		#endregion unit actions
+		
+		#region private methods
+		
 		/// <summary>
 		/// We need an internal ProcessMove method to avoid altering the original path.
 		/// </summary>
 		/// <param name="unit"></param>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		private bool ProcessMoveInternal(UnitBase unit, List<Location> path)
+		private bool ProcessMoveInternal(UnitBase unit, Location nextLeg)
 		{
 			//check that the map is empty at the desired location
-			if (!_map.ReserveIfEmpty(path[0], unit)) return false;
+			if (!_map.ReserveIfEmpty(nextLeg, unit)) return false;
 
 			MoveAction moveAction = new MoveAction
 			{
 				Tick = _timeKeeper.Tick + unit.MovementSpeed,
-				Location = path[0],
-				Path = path
+				Location = nextLeg
 			};
 
-			unit.BeginMove(path[0], path.Count);
+			unit.BeginMove(nextLeg);
 
 			AddAction(unit, moveAction);
 
@@ -217,39 +231,12 @@ namespace Evolution
 
 		private void MoveActionHandler(UnitBase unit, MoveAction action)
 		{
-			//condition removed because the reservation has been implemented
-			//if (_map.IsEmptyCell(action.Location))
-			//{
-			//	Debug.WriteLineIf(unit.Id == 0, "Engine: Cell was not blocked");
-
-			_map.Move(unit, unit.Location, action.Location);
+			Location oldLocation = unit.Location;
+			Location newLocation = action.Location;
+			_map.Move(unit, oldLocation, newLocation);
 
 			unit.EndMove(action.Location);
-
-			action.Path.RemoveAt(0);
-
-			if (action.Path.Count == 0)
-			{
-				unit.Ready(action.ActionType);
-			}
-			else
-			{
-				Debug.WriteLineIf(unit.Id == 0, "Engine: Moving to the next cell in path");
-				//next action should be programmed
-				//TODO: this logic might be better suited for the UnitBase
-				if (!ProcessMoveInternal(unit, action.Path))
-				{
-					unit.Ready(action.ActionType);
-				}
-			}
-			//}
-			//else
-			//{
-			//	Debug.WriteLineIf(unit.Id == 0, "Engine: Cell was blocked");
-			//	//the move failed because somebody already occupied the cell
-			//	//but we need to inform the unit that he can perform new actions
-			//	unit.Ready(action.ActionType);
-			//}
+			unit.Ready(ActionType.Move);
 		}
 
 		private void IdleActionHandler(UnitBase unit, IdleAction action)
@@ -266,6 +253,7 @@ namespace Evolution
 			actionList.Enqueue(unit);
 		}
 
+		#endregion private methods
 
 	}
 }

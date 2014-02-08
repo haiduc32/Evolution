@@ -17,7 +17,5 @@ namespace Evolution.EngineActions
 		}
 
 		public Location Location { get; set; }
-
-		public List<Evolution.Location> Path { get; set; }
 	}
 }

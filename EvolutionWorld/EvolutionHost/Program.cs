@@ -1,4 +1,5 @@
 ﻿using Evolution;
+using Evolution.Characters;
 using Evolution.Events;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Cors;
@@ -32,7 +33,9 @@ namespace EvolutionHost
             engine.Start();
 			AllVillagers = new List<VillagerNpc>();
 
-			AllVillagers.AddRange(engine.CreateVillagers());
+			//AllVillagers.AddRange(engine.CreateVillagers());
+
+			AllVillagers.Add(engine.CreateVillager(0, 0));
 
 			foreach (VillagerNpc villager in AllVillagers)
 			{
@@ -45,22 +48,26 @@ namespace EvolutionHost
 
 			//TODO: should add only the new units here!
 			NewUnits(AllVillagers);
+			string hostUrl = System.Configuration.ConfigurationManager.AppSettings["hostUrl"];
+			
 
 			//start the hub
-			string url = "http://localhost:9999";
-			using (WebApp.Start(url))
+			using (WebApp.Start(hostUrl))
 			{
 
-				Console.WriteLine("Server running on {0}", url);
+				Console.WriteLine("Server running on {0}", hostUrl);
 
 				HttpClient client = new HttpClient();
 				//url = "http://partizan-server:9999";
-				var response = client.GetAsync(url + "/signalr/hubs").Result;
-				response = client.GetAsync(url + "/signalr/hubs").Result;
-
-				Console.WriteLine(response);
-				Console.WriteLine("Content:");
-				Console.WriteLine(response.Content.ReadAsStringAsync().Result);
+				var response = client.GetAsync(hostUrl + "/signalr/hubs").Result;
+				if (response.StatusCode != System.Net.HttpStatusCode.OK)
+				{
+					Console.WriteLine("Could not check that the port has been opened with success.");
+				}
+				else
+				{
+					Console.WriteLine("Running OK.");
+				}
 
 
 
