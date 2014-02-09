@@ -33,9 +33,9 @@ namespace EvolutionHost
             engine.Start();
 			AllVillagers = new List<VillagerNpc>();
 
-			//AllVillagers.AddRange(engine.CreateVillagers());
+			AllVillagers.AddRange(engine.CreateVillagers());
 
-			AllVillagers.Add(engine.CreateVillager(0, 0));
+			//AllVillagers.Add(engine.CreateVillager(0, 0));
 
 			foreach (VillagerNpc villager in AllVillagers)
 			{
@@ -46,7 +46,6 @@ namespace EvolutionHost
 				villager.OnEndPath += VillagerEndPath;
 			}
 
-			//TODO: should add only the new units here!
 			NewUnits(AllVillagers);
 			string hostUrl = System.Configuration.ConfigurationManager.AppSettings["hostUrl"];
 
