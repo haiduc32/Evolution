@@ -6,26 +6,36 @@ using System.Threading.Tasks;
 
 namespace Evolution.Core.Logging
 {
-	class Logging
+	public class Logging
 	{
 		//public void Log(LogSystem logSystem, LogLevel logLevel, string text)
 		//{
 
 		//}
 
-		public void LogEngine(string text)
+		internal void LogEngine(string text)
 		{
 
 		}
 
-		public void LogStatistics(LogStatisticsType statisticsType)
+		internal void LogStatistics(LogStatisticsType statisticsType)
 		{
 
 		}
 
-		public void LogError(LogSystem logSystem, Exception e)
+		internal void LogError(LogSystem logSystem, Exception e)
 		{
 
 		}
+
+		internal void LogUnit(int id, string text)
+		{
+			if (OnLogMessage != null)
+			{
+				OnLogMessage(this, string.Format("{0}: {1}", id, text));
+			}
+		}
+
+		public event EventHandler<string> OnLogMessage;
 	}
 }

@@ -18,6 +18,8 @@ namespace Evolution
 		private const int MAP_HEIGHT = 16;
 		private const int MAP_WIDTH = 16;
 
+		private object _mapLockObject = new object();
+
 		/// <summary>
 		/// keeps track of all the stuff on the map.
 		/// </summary>
@@ -71,15 +73,18 @@ namespace Evolution
 			//TODO: move to some constants if will keep it (see below)
 			const int RESERVED = 1;
 			//TODO: maybe set the map id of the unit instead of a reservation code?
-			if (_map[location.X, location.Y] == 0 && 0 == Interlocked.CompareExchange(
-				ref _map[location.X, location.Y], RESERVED, 0))
+
+			lock (_mapLockObject)
 			{
-				//TODO: track the reservation owner
+				if (_map[location.X, location.Y] == 0 && 0 == Interlocked.CompareExchange(
+					ref _map[location.X, location.Y], RESERVED, 0))
+				{
+					//TODO: track the reservation owner
 
-				return true;
+					return true;
+				}
+				return false;
 			}
-
-			return false;
 		}
 
 		//TODO: should get units by some kind of regions, but for initial testing this will do

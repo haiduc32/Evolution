@@ -40,7 +40,7 @@
 			// connected and untis are on path
 			this.evolutionHub.client.unitBeginPath = function (unitId, path) {
 				var unit = self.unitsList[unitId];
-				if (unit != undefined) unit.followingPath(path);
+				if (unit != undefined) unit.beginPath(path);
 			};
 
 			this.evolutionHub.client.unitContinuePath = function (unitId, path) {

@@ -30,6 +30,7 @@ namespace EvolutionHost
 
             Console.WriteLine("Starting engine.");
             engine = new Engine();
+			engine.Logging.OnLogMessage += Logging_OnLogMessage;
             engine.Start();
 			AllVillagers = new List<VillagerNpc>();
 
@@ -42,7 +43,7 @@ namespace EvolutionHost
 				//villager.OnBeginMove += VillagerBeginMove;
 				villager.OnEndMove += VillagerEndMove;
 				villager.OnBeginPath += VillagerBeginPath;
-				villager.OnContinuePath += VillagerContinuePath;
+				//villager.OnContinuePath += VillagerContinuePath;
 				villager.OnEndPath += VillagerEndPath;
 			}
 
@@ -74,9 +75,18 @@ namespace EvolutionHost
 			}
         }
 
-		private static void NewUnits(List<VillagerNpc> units)
+		static void Logging_OnLogMessage(object sender, string e)
 		{
-			var hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
+			IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
+
+			if (hubContext == null) return;
+
+			hubContext.Clients.All.logMessage(e);
+		}
+
+		private static void NewUnits(IEnumerable<VillagerNpc> units)
+		{
+			IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
 
 			var locations = units.Select(x =>
 				new { id = x.Id, location = x.Location });
@@ -85,19 +95,19 @@ namespace EvolutionHost
 
 		private static void VillagerBeginPath(object sender, UnitBeginPathEventArgs args)
 		{
-			var hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
+			IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
 			hubContext.Clients.All.unitBeginPath(args.Unit.Id, args.Path);
 		}
 
 		private static void VillagerContinuePath(object sender, UnitContinuePathEventArgs args)
 		{
-			var hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
+			IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
 			hubContext.Clients.All.unitContinuePath(args.Unit.Id, args.Path);
 		}
 
 		private static void VillagerEndPath(object sender, UnitEndPathEventArgs args)
 		{
-			var hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
+			IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
 			hubContext.Clients.All.unitEndPath(args.Unit.Id, args.Location, args.PathInterrupted);
 		}
 
@@ -109,7 +119,7 @@ namespace EvolutionHost
 
 		private static void VillagerEndMove(object sender, UnitEndMoveEventArgs args)
 		{
-			var hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
+			IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
 			hubContext.Clients.All.unitEndMove(args.Unit.Id, args.LastLocation, args.NewLocation);
 		}
 

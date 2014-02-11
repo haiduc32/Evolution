@@ -89,7 +89,7 @@ require(['jquery', 'game/gameCanvas', 'game/game', 'game/evolutionConsole', 'cla
 
 			//terminal.echo('you type command "' + command + '"');
 		});
-		$('#terminal').terminal(function (command, term) {
+		var logTerminal = $('#terminal').terminal(function (command, term) {
 			if (command == 'helo') {
 				term.echo('hey there stranger!')
 			}
@@ -120,6 +120,10 @@ require(['jquery', 'game/gameCanvas', 'game/game', 'game/evolutionConsole', 'cla
 		//var gameCanvas = gameCanvas;//new GameCanvas('canvas2');
 
 		this.game = new Game(gameCanvas, hubUrl);
+
+		this.game.evolutionHub.client.logMessage = function(text) {
+			logTerminal.echo(text);
+		};
 
 		//TODO: move somewhere else
 		this.game.start();

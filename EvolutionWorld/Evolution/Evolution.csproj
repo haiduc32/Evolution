@@ -67,6 +67,7 @@
     <Compile Include="IUnitEngineEvents.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="EngineActions\MoveAction.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Random.cs" />
@@ -76,7 +77,6 @@
     <Compile Include="Events\UnitBeginMoveEventArgs.cs" />
     <Compile Include="UnitBeginRouteEventArgs.cs" />
     <Compile Include="Characters\VillagerNpc.cs" />
-    <Compile Include="ZombieNpc.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Enums\" />

@@ -36,13 +36,33 @@ namespace Evolution.Characters
 
 			bool actionTaken = false;
 
+			UnitBase unitToAttack;
+
 			//if attacking a unit
 			if (AttackedUnit != null)
 			{
-				
+				// if in attack range, just attack it
+				// else 
+				//      if moving, check that the destination is a cell next to the attacked unit
+				//      else adjust the route to the attacked unit
+				//      if not moving, then start moving
 			}
-			//if there is an unit worth attacking in range, attack it
-			//else if (UnitsInRange)
+			//if there is a unit worth attacking in range, attack it
+			else if ((unitToAttack = FindUnitToAttack()) != null)
+			{
+				//let's not forget that if we are moving, we should stop first
+				if (IsFollowingRoute)
+				{
+					RouteEnded(true);
+				}
+
+				//TOOD: attack the unit!
+				// set the attacked unit property
+				AttackedUnit = unitToAttack;
+				// if in attack range, just attack it
+				Engine.ProcessAttack(this, AttackedUnit);
+				// else move to the attacked unit
+			}
 
 			if (true)//!IsUnderAttack() && !IsAttacking() && !IsEnRoute())
 			{
@@ -72,7 +92,7 @@ namespace Evolution.Characters
 
 							if (!actionTaken)
 							{
-								PathEnded(true);
+								RouteEnded(interrupted: true);
 							}
 						}
 					}
@@ -101,6 +121,12 @@ namespace Evolution.Characters
 			}
 		}
 
+
+		private UnitBase FindUnitToAttack()
+		{
+			return UnitsInRange.Where(x => !x.IsNpc || x is VillagerNpc)
+				.OrderBy(DistanceToUnit).FirstOrDefault();
+		}
 
 	}
 }

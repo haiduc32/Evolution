@@ -6,6 +6,7 @@
 			this.id = id;
 			this.x = 0;
 			this.y = 0;
+			this.location = {};
 			//TODO: figure out what to do with the scale
 			this.sprite = new Sprite(this.spriteName, 1);
 			this.sprite.setLabel(id);
@@ -39,9 +40,20 @@
 			this.x = location.X;
 			this.y = location.Y;
 
+			this.location = location;
+
 			if (this.sprite != undefined) {
 				if (!this.sprite.isOnPath)
 					this.sprite.setLocation(location);
+			}
+		},
+
+		beginPath: function (path) {
+			//because of how the Sprite works it won't know it's current location if the current path is 
+			//interrupted, so we explicitly set it here
+			this.sprite.setLocation(this.location);
+			if (this.sprite != undefined) {
+				this.sprite.startPath(path);
 			}
 		},
 

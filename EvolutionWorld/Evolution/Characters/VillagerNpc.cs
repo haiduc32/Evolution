@@ -60,7 +60,7 @@ namespace Evolution.Characters
 
 							if (!actionTaken)
 							{
-								PathEnded(true);
+								RouteEnded(true);
 							}
 						}
 					}

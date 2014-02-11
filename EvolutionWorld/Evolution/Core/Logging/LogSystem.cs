@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Evolution.Core.Logging
 {
-	enum LogSystem
+	public enum LogSystem
 	{
 		Other,
 		Engine,

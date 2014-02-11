@@ -161,7 +161,7 @@
 
 		
 		setLocation: function (location) {
-			if (this.kineticSprite != undefined && !this.isOnPath) {
+			if (this.kineticSprite != undefined/* && !this.isOnPath*/) {
 				this.lastLocation = location;
 
 				var x = location.X * this.cellSize;// + this.offsetX / 2;
@@ -232,7 +232,7 @@
 					var walkingAnimation = this.getWalkingAnimation(this.lastLocation, this.newLocation);
 
 					if (this.animationLength == this.animationLeft) {
-						if (this.pathLeg == 0) {
+						if (this.pathLeg == 0 && this.kineticSprite.getAnimation() != walkingAnimation) {
 							this.walkingAnimation = walkingAnimation;
 							this.kineticSprite.stop();
 							this.kineticSprite.setAnimation(walkingAnimation);

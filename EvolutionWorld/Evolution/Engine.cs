@@ -1,5 +1,6 @@
 ﻿using Evolution.Characters;
 using Evolution.Core;
+using Evolution.Core.Logging;
 using Evolution.EngineActions;
 using System;
 using System.Collections.Concurrent;
@@ -25,15 +26,16 @@ namespace Evolution
 
 		//private int lastEnvironmentTickcount;
 
-		private ConcurrentDictionary<UnitBase, ActionBase> unitActionDict;
+		private readonly ConcurrentDictionary<UnitBase, ActionBase> _unitActionDict;
 
-		private ConcurrentDictionary<long, ConcurrentQueue<UnitBase>> scheduledActionsDict;
+		private readonly ConcurrentDictionary<long, ConcurrentQueue<UnitBase>> _scheduledActionsDict;
 
-		private Map _map;
+		private readonly Map _map;
 
-		private TimeKeeper _timeKeeper;
+		private readonly TimeKeeper _timeKeeper;
 
-		private List<UnitBase> _characters;
+		private readonly List<UnitBase> _characters;
+
 
 		#endregion private fields
 
@@ -41,17 +43,22 @@ namespace Evolution
 
 		public Map Map { get { return _map; } }
 
+		public Logging Logging { get; private set; }
+
 		#endregion properties
 
 		#region .ctor
 
 		public Engine()
 		{
-			unitActionDict = new ConcurrentDictionary<UnitBase, ActionBase>();
-			scheduledActionsDict = new ConcurrentDictionary<long, ConcurrentQueue<UnitBase>>();
+			_unitActionDict = new ConcurrentDictionary<UnitBase, ActionBase>();
+			_scheduledActionsDict = new ConcurrentDictionary<long, ConcurrentQueue<UnitBase>>();
 			_timeKeeper = new TimeKeeper();
 			_map = new Map();
 			_characters = new List<UnitBase>();
+
+
+			Logging = new Logging();
 		}
 
 		#endregion .ctor
@@ -60,7 +67,7 @@ namespace Evolution
 		List<UnitBase> villagers;
 		public void PrintStats()
 		{
-			foreach (VillagerNpc villager in villagers)
+			foreach (UnitBase villager in villagers)
 			{
 				Console.WriteLine("{0} {1}", villager.Location.X, villager.Location.Y);
 			}
@@ -77,7 +84,8 @@ namespace Evolution
 			{
 				Map = _map,
 				Engine = this,
-				Id = _characters.Any() ? _characters.Max(unit => unit.Id) + 1 : 0
+				Id = _characters.Any() ? _characters.Max(unit => unit.Id) + 1 : 0,
+				Logging = Logging
 			};
 
 			_map.Add(villager, location);
@@ -118,7 +126,7 @@ namespace Evolution
 					try
 					{
 						ConcurrentQueue<UnitBase> listOfActions;
-						if (scheduledActionsDict.TryGetValue(tick, out listOfActions))
+						if (_scheduledActionsDict.TryGetValue(tick, out listOfActions))
 						{
 							ActionBlock<UnitBase> actionBlock = new ActionBlock<UnitBase>(x => ActionHandler(x));
 							foreach (UnitBase unit in listOfActions)
@@ -132,7 +140,7 @@ namespace Evolution
 							actionBlock.Completion.Wait();
 
 							//now remove the list of actions because they have been processed
-							scheduledActionsDict.TryRemove(tick, out listOfActions);
+							_scheduledActionsDict.TryRemove(tick, out listOfActions);
 						}
 					}
 					catch (Exception e)
@@ -148,7 +156,7 @@ namespace Evolution
 
 		public bool ProcessIdle(UnitBase unit, int idleTicks)
 		{
-			if (unitActionDict.ContainsKey(unit)) return false;
+			if (_unitActionDict.ContainsKey(unit)) return false;
 
 			IdleAction idleAction = new IdleAction
 			{
@@ -163,7 +171,7 @@ namespace Evolution
 		public bool ProcessMove(UnitBase unit, Location nextLeg)
 		{
 			Debug.WriteLineIf(unit.Id == 0, "Engine: ProcessMove");
-			if (unitActionDict.ContainsKey(unit))
+			if (_unitActionDict.ContainsKey(unit))
 			{
 				Debug.WriteLineIf(unit.Id == 0, "Engine: ProcessMove returning false");
 				return false;
@@ -172,9 +180,16 @@ namespace Evolution
 			return ProcessMoveInternal(unit, nextLeg);
 		}
 
+		public void ProcessAttack(UnitBase attackignUnit, UnitBase attackedUnit)
+		{
+			//TODO: check that the attacked unit is in range
+
+			throw new NotImplementedException();
+		}
+
 		public void CancelAllActions(UnitBase unit)
 		{
-
+			throw new NotImplementedException();
 		}
 
 		#endregion unit actions
@@ -185,7 +200,7 @@ namespace Evolution
 		/// We need an internal ProcessMove method to avoid altering the original path.
 		/// </summary>
 		/// <param name="unit"></param>
-		/// <param name="path"></param>
+		/// <param name="nextLeg"></param>
 		/// <returns></returns>
 		private bool ProcessMoveInternal(UnitBase unit, Location nextLeg)
 		{
@@ -210,7 +225,7 @@ namespace Evolution
 			try
 			{
 				ActionBase action;
-				if (unitActionDict.TryRemove(unit, out action))
+				if (_unitActionDict.TryRemove(unit, out action))
 				{
 					switch (action.ActionType)
 					{
@@ -246,9 +261,9 @@ namespace Evolution
 
 		private void AddAction(UnitBase unit, ActionBase action)
 		{
-			unitActionDict.TryAdd(unit, action);
+			_unitActionDict.TryAdd(unit, action);
 
-			ConcurrentQueue<UnitBase> actionList = scheduledActionsDict
+			ConcurrentQueue<UnitBase> actionList = _scheduledActionsDict
 				.GetOrAdd(action.Tick, new ConcurrentQueue<UnitBase>());
 			actionList.Enqueue(unit);
 		}

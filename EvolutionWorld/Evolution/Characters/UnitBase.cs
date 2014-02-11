@@ -1,4 +1,5 @@
 ﻿using Algorithms;
+using Evolution.Core.Logging;
 using Evolution.EngineActions;
 using Evolution.Events;
 using System;
@@ -12,10 +13,17 @@ namespace Evolution.Characters
 	{
 		#region properties
 
+		internal Logging Logging { get; set; }
+
 		/// <summary>
-		/// Sensory range in number of cells.
+		/// Gets the Cartesian sensory range in number of cells.
 		/// </summary>
 		public abstract int Range { get; }
+
+		/// <summary>
+		/// Gets the Cartesian attack range.
+		/// </summary>
+		public virtual int AttackRange { get { return 1; } }
 
 		public abstract bool IsNpc { get; }
 
@@ -32,7 +40,7 @@ namespace Evolution.Characters
 
 		public int ExperiencePoints { get; private set; }
 
-		public UnitBase AttackedUnit { get; private set; }
+		public UnitBase AttackedUnit { get; protected set; }
 
 		public bool IsFollowingRoute
 		{
@@ -159,7 +167,7 @@ namespace Evolution.Characters
 		{
 			Location lastLocation = Location;
 			Location = location;
-
+			Logging.LogUnit(Id, string.Format("(x:{0}, y:{1})", location.X, location.Y));
 
 
 			if (OnEndMove != null)
@@ -186,7 +194,7 @@ namespace Evolution.Characters
 				//if we arrived at the destination then raise the OnEndPath event
 				if (Location == Destination)
 				{
-					PathEnded(false);
+					RouteEnded(false);
 				}
 			}
 		}
@@ -221,16 +229,18 @@ namespace Evolution.Characters
 		/// </summary>
 		public bool Move(Location targetLocation)
 		{
-			//TODO: should return false if moving to the position is not possible
-
 			List<Location> calculatedRoute = FindPath(targetLocation);
 			if (calculatedRoute == null) return false;
+
+			if (Destination.HasValue)
+			{
+				Location oldDestination = Destination.Value;
+			}
 
 			RemainingRoute = calculatedRoute;
 			RouteTotalLegsCount = calculatedRoute.Count;
 			Destination = targetLocation;
 
-			//List<Location> path = new List<Evolution.Location> { targetLocation };
 			if (!Engine.ProcessMove(this, RemainingRoute[0]))
 			{
 				return false;
@@ -266,10 +276,12 @@ namespace Evolution.Characters
 		/// Resets the Destination and RemainingRoute. Sends the OnEndPath event.
 		/// </summary>
 		/// <param name="interrupted">false - if the destination has been reached, true - otherwise.</param>
-		protected void PathEnded(bool interrupted)
+		protected void RouteEnded(bool interrupted)
 		{
 			Destination = null;
 			RemainingRoute = null;
+
+			Logging.LogUnit(Id, string.Format("Path interrupted at (x:{0}, y:{1})", Location.X, Location.Y));
 
 			if (OnEndPath != null)
 			{
@@ -334,8 +346,10 @@ namespace Evolution.Characters
 
 			Location location = new Location { X = x, Y = y, Z = 0 };
 
-				//if could not move, try again later
-				if (Move(location)) return true;
+			if (!Map.IsEmptyCell(location)) return false;
+
+			//if could not move, try again later
+			if (Move(location)) return true;
 
 			return false;
 		}
@@ -373,25 +387,30 @@ namespace Evolution.Characters
 		/// <summary>
 		/// Checks if the unit is in sensory range.
 		/// </summary>
-		/// <param name="unit"></param>
-		/// <returns></returns>
 		protected virtual bool IsInRange(UnitBase unit)
 		{
-			throw new NotImplementedException();
+			return CartesianDistance(unit.Location) <= Range;
 		}
 
 		protected virtual bool IsInAttackRange(UnitBase unit)
 		{
-			//checks if a unit is still in range
+			//TODO: in the future should check if the unit uses a ranged weapon and 
+			//do a Cartesian distance calculation
 
-			//so far nobody supports attacking from different hight levels
-			if (unit.Location.Z != Location.Z) return false;
+			return DistanceToUnit(unit) <= AttackRange;
+		}
 
-			if (Math.Abs(unit.Location.X - Location.X) > 1) return false;
+		/// <summary>
+		/// Returns a cell distance to the unit not considering any obstacles.
+		/// </summary>
+		protected virtual int DistanceToUnit(UnitBase unit)
+		{
+			return Math.Abs(Location.X - unit.Location.X) + Math.Abs(Location.Y - unit.Location.Y);
+		}
 
-			if (Math.Abs(unit.Location.Y - Location.Y) > 1) return false;
-
-			return true;
+		protected int CartesianDistance(Location location)
+		{
+			return (int)Math.Sqrt(Math.Sqrt(Location.X - location.X) + (Location.Y - location.Y));
 		}
 
 		#endregion protected
