@@ -69,7 +69,7 @@
 				if (this.sprite != undefined) {
 					if (this.sprite.isOnPath) {
 						this.sprite.stopPath(location, pathInterrupted);
-						//this.sprite.setLocation(location);
+						this.sprite.setLocation(location);
 					}
 				}
 			}

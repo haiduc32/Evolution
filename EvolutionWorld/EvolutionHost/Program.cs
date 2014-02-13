@@ -34,16 +34,16 @@ namespace EvolutionHost
             engine.Start();
 			AllVillagers = new List<VillagerNpc>();
 
-			//AllVillagers.AddRange(engine.CreateVillagers());
+			AllVillagers.AddRange(engine.CreateVillagers());
 
-			AllVillagers.Add(engine.CreateVillager(0, 0));
+			//AllVillagers.Add(engine.CreateVillager(0, 0));
 
 			foreach (VillagerNpc villager in AllVillagers)
 			{
 				//villager.OnBeginMove += VillagerBeginMove;
 				villager.OnEndMove += VillagerEndMove;
 				villager.OnBeginPath += VillagerBeginPath;
-				//villager.OnContinuePath += VillagerContinuePath;
+				villager.OnContinuePath += VillagerContinuePath;
 				villager.OnEndPath += VillagerEndPath;
 			}
 
@@ -81,7 +81,7 @@ namespace EvolutionHost
 
 			if (hubContext == null) return;
 
-			hubContext.Clients.All.logMessage(e);
+			//hubContext.Clients.All.logMessage(e);
 		}
 
 		private static void NewUnits(IEnumerable<VillagerNpc> units)
@@ -110,12 +110,6 @@ namespace EvolutionHost
 			IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
 			hubContext.Clients.All.unitEndPath(args.Unit.Id, args.Location, args.PathInterrupted);
 		}
-
-		//private static void VillagerBeginMove(object sender, UnitBeginMoveEventArgs args)
-		//{
-		//	var hubContext = GlobalHost.ConnectionManager.GetHubContext<EvolutionHub>();
-		//	hubContext.Clients.All.unitBeginMove(args.Unit.Id, args.LastLocation, args.NewLocation);
-		//}
 
 		private static void VillagerEndMove(object sender, UnitEndMoveEventArgs args)
 		{
