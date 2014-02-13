@@ -34,9 +34,9 @@ namespace EvolutionHost
             engine.Start();
 			AllVillagers = new List<VillagerNpc>();
 
-			AllVillagers.AddRange(engine.CreateVillagers());
+			//AllVillagers.AddRange(engine.CreateVillagers());
 
-			//AllVillagers.Add(engine.CreateVillager(0, 0));
+			AllVillagers.Add(engine.CreateVillager(0, 0));
 
 			foreach (VillagerNpc villager in AllVillagers)
 			{
