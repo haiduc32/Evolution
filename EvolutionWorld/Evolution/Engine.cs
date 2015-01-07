@@ -142,6 +142,9 @@ namespace Evolution
 							//now remove the list of actions because they have been processed
 							_scheduledActionsDict.TryRemove(tick, out listOfActions);
 						}
+
+                        if (tick > 100 && (_unitActionDict.Count < 9 || _unitActionDict.Any(x=>x.Value.Tick < tick)))
+                        {}
 					}
 					catch (Exception e)
 					{
@@ -261,6 +264,9 @@ namespace Evolution
 
 		private void AddAction(UnitBase unit, ActionBase action)
 		{
+            if (action.Tick <= _timeKeeper.Tick)
+            { }
+
 			_unitActionDict.TryAdd(unit, action);
 
 			ConcurrentQueue<UnitBase> actionList = _scheduledActionsDict

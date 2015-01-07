@@ -256,7 +256,7 @@ namespace Evolution.Characters
 		/// </summary>
 		protected void Idle()
 		{
-			Engine.ProcessIdle(this, Random.Next(1000));
+			Engine.ProcessIdle(this, Math.Max(50, Random.Next(1000)));
 		}
 
 		/// <summary>
