@@ -10,17 +10,12 @@ namespace Evolution
 {
 	interface IUnitEngineEvents
 	{
-		void UnitInRange(UnitBase unit);
+        Location Location { get; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="location"></param>
-		/// <returns>true - if the path it is on should be automatically continued by the engine; false - the path (if any) should be stopped</returns>
-		void EndMove(Location location);
+		void UnitInRange(CharacterBase unit);
 
-		void UnitOutOfRange(UnitBase unit);
+		void UnitOutOfRange(CharacterBase unit);
 
-		void Ready(ActionType finishedAction);
+		void Ready(ActionBase finishedAction);
 	}
 }

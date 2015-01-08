@@ -9,6 +9,6 @@ namespace Evolution.Events
 {
     public class UnitEventArgs : EventArgs
     {
-        public UnitBase Unit { get; set; }
+        public CharacterBase Unit { get; set; }
     }
 }

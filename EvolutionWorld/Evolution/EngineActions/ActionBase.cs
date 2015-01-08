@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Evolution.EngineActions
 {
-	abstract class ActionBase
+	public abstract class ActionBase
 	{
 		public abstract ActionType ActionType { get; }
 

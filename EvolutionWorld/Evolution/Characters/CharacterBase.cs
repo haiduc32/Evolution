@@ -9,13 +9,13 @@ using System.Linq;
 
 namespace Evolution.Characters
 {
-	public abstract class UnitBase : IUnitEngineEvents, ICommunicationUnit
+	public abstract class CharacterBase : Unit, IUnitEngineEvents, ICommunicationUnit
 	{
 		#region properties
 
 		internal Logging Logging { get; set; }
 
-		/// <summary>
+		/// <summary>j
 		/// Gets the Cartesian sensory range in number of cells.
 		/// </summary>
 		public abstract int Range { get; }
@@ -36,11 +36,11 @@ namespace Evolution.Characters
 
 		public int MaxLife { get; private set; }
 
-		public Location Location { get; private set; }
+		
 
 		public int ExperiencePoints { get; private set; }
 
-		public UnitBase AttackedUnit { get; protected set; }
+		public CharacterBase AttackedUnit { get; protected set; }
 
 		public bool IsFollowingRoute
 		{
@@ -68,7 +68,7 @@ namespace Evolution.Characters
 
 		public int Id { get; set; }
 
-		protected List<UnitBase> UnitsInRange { get; private set; } 
+		protected List<CharacterBase> UnitsInRange { get; private set; } 
 
 		#endregion properties
 
@@ -90,9 +90,9 @@ namespace Evolution.Characters
 
 		#region .ctor
 
-		public UnitBase()
+		public CharacterBase()
 		{
-			UnitsInRange = new List<UnitBase>();
+			UnitsInRange = new List<CharacterBase>();
 		}
 
 		#endregion .ctor
@@ -102,7 +102,7 @@ namespace Evolution.Characters
 		/// <summary>
 		/// Engine event. Called when a new unit comes in range.
 		/// </summary>
-		public virtual void UnitInRange(UnitBase unit)
+		public virtual void UnitInRange(CharacterBase unit)
 		{
 			UnitsInRange.Add(unit);
 		}
@@ -110,7 +110,7 @@ namespace Evolution.Characters
 		/// <summary>
 		/// Engine event. Called when a unit gets out of range (or also if dies).
 		/// </summary>
-		public virtual void UnitOutOfRange(UnitBase unit)
+		public virtual void UnitOutOfRange(CharacterBase unit)
 		{
 			UnitsInRange.Remove(unit);
 		}
@@ -160,52 +160,33 @@ namespace Evolution.Characters
 			}
 		}
 
-		/// <summary>
-		/// Engine event. Notifies the unit that it's position has changed.
-		/// </summary>
-		public virtual void EndMove(Location location)
-		{
-			Location lastLocation = Location;
-			Location = location;
-			Logging.LogUnit(Id, string.Format("(x:{0}, y:{1})", location.X, location.Y));
 
-
-			if (OnEndMove != null)
-			{
-				UnitEndMoveEventArgs args = new UnitEndMoveEventArgs
-				{
-					Unit = this,
-					LastLocation = lastLocation,
-					NewLocation = location
-				};
-
-				OnEndMove(this, args);
-			}
-		}
 
 		/// <summary>
 		/// Engine event. Notifies the unit that it's ready for new actions.
 		/// The EndMove event will be fired if the Location is the same as the Destination.
 		/// </summary>
-		public virtual void Ready(ActionType finishedAction)
-		{
-			if (finishedAction == ActionType.Move)
-			{
-				//if we arrived at the destination then raise the OnEndPath event
-				if (Location == Destination)
-				{
-					RouteEnded(false);
-				}
-			}
-		}
+        public void Ready(ActionBase action)
+        {
+            //call the EndMove first 
+            if (action.ActionType == ActionType.Move)
+            {
+                EndMove((action as MoveAction).Location);
+            }
 
-
+            ReadyInternal(action);
+        }
 
 		#endregion engine events
 
+        #region command methods
 
-
-		public bool AttackUnit(UnitBase unit)
+        /// <summary>
+        /// Attack order.
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <returns></returns>
+		public bool AttackUnitOrder(CharacterBase unit)
 		{
 			throw new NotImplementedException();
 
@@ -225,31 +206,43 @@ namespace Evolution.Characters
 
 
 		/// <summary>
-		/// Command.
+		/// Move order.
 		/// </summary>
-		public bool Move(Location targetLocation)
+		public bool MoveOrder(Location targetLocation)
 		{
-			List<Location> calculatedRoute = FindPath(targetLocation);
-			if (calculatedRoute == null) return false;
-
-			if (Destination.HasValue)
-			{
-				Location oldDestination = Destination.Value;
-			}
-
-			RemainingRoute = calculatedRoute;
-			RouteTotalLegsCount = calculatedRoute.Count;
-			Destination = targetLocation;
-
-			if (!Engine.ProcessMove(this, RemainingRoute[0]))
-			{
-				return false;
-			}
-
-			return true;
+            return Move(targetLocation);
 		}
 
+        #endregion command methods
+
 		#region protected methods
+
+        public bool Move(Location targetLocation)
+        {
+            List<Location> calculatedRoute = FindPath(targetLocation);
+            if (calculatedRoute == null) return false;
+
+            if (Destination.HasValue)
+            {
+                Location oldDestination = Destination.Value;
+            }
+
+            RemainingRoute = calculatedRoute;
+            RouteTotalLegsCount = calculatedRoute.Count;
+            Destination = targetLocation;
+
+            if (!Engine.ProcessMove(this, RemainingRoute[0]))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        protected virtual void ReadyInternal(ActionBase finishedAction)
+		{
+
+		}
 		
 		/// <summary>
 		/// take a nap, up to a 1000 ticks - 10,000 msec
@@ -271,6 +264,36 @@ namespace Evolution.Characters
 
 			return Engine.ProcessMove(this, nextLeg);
 		}
+
+        /// <summary>
+        /// Sets the new location and notifies the UI.
+        /// </summary>
+        /// <param name="location">The new location.</param>
+        protected void EndMove(Location location)
+        {
+            Location lastLocation = Location;
+            Location = location;
+            Logging.LogUnit(Id, string.Format("(x:{0}, y:{1})", location.X, location.Y));
+
+
+            if (OnEndMove != null)
+            {
+                UnitEndMoveEventArgs args = new UnitEndMoveEventArgs
+                {
+                    Unit = this,
+                    LastLocation = lastLocation,
+                    NewLocation = location
+                };
+
+                OnEndMove(this, args);
+            }
+
+            //if we arrived at the destination then raise the OnEndPath event
+            if (Location == Destination)
+            {
+                RouteEnded(false);
+            }
+        }
 
 		/// <summary>
 		/// Resets the Destination and RemainingRoute. Sends the OnEndPath event.
@@ -374,7 +397,7 @@ namespace Evolution.Characters
 			}
 		}
 
-		protected virtual bool MoveToAttack(UnitBase unit)
+		protected virtual bool MoveToAttack(CharacterBase unit)
 		{
 			throw new NotImplementedException();
 		}
@@ -387,12 +410,12 @@ namespace Evolution.Characters
 		/// <summary>
 		/// Checks if the unit is in sensory range.
 		/// </summary>
-		protected virtual bool IsInRange(UnitBase unit)
+		protected virtual bool IsInRange(CharacterBase unit)
 		{
 			return CartesianDistance(unit.Location) <= Range;
 		}
 
-		protected virtual bool IsInAttackRange(UnitBase unit)
+		protected virtual bool IsInAttackRange(CharacterBase unit)
 		{
 			//TODO: in the future should check if the unit uses a ranged weapon and 
 			//do a Cartesian distance calculation
@@ -403,7 +426,7 @@ namespace Evolution.Characters
 		/// <summary>
 		/// Returns a cell distance to the unit not considering any obstacles.
 		/// </summary>
-		protected virtual int DistanceToUnit(UnitBase unit)
+		protected virtual int DistanceToUnit(CharacterBase unit)
 		{
 			return Math.Abs(Location.X - unit.Location.X) + Math.Abs(Location.Y - unit.Location.Y);
 		}

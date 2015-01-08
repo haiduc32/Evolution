@@ -1,0 +1,5 @@
+1. add support for rivers
+	-river cells to have a dirrection with slightly random deviations, so entities that get into watter can drift ashore
+	- have rivers with different speed
+2. lakes
+3. characters can get into rivers and float depending on their swiming skill, if the river is too fast and the skill too little, they'll drawn

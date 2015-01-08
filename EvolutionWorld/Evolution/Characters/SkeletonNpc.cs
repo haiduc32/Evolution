@@ -8,7 +8,7 @@ using Evolution.EngineActions;
 
 namespace Evolution.Characters
 {
-	public class SkeletonNpc : UnitBase
+	public class SkeletonNpc : CharacterBase
 	{
 		#region default properties
 
@@ -29,14 +29,16 @@ namespace Evolution.Characters
 
 		#endregion default properties
 
-		public override void Ready(ActionType finishedAction)
+		protected override void ReadyInternal(ActionBase action)
 		{
+            ActionType finishedAction = action.ActionType;
+            //TODO: filter by the types of handled actions
 			//call the base first!
-			base.Ready(finishedAction);
+			base.ReadyInternal(action);
 
 			bool actionTaken = false;
 
-			UnitBase unitToAttack;
+			CharacterBase unitToAttack;
 
 			//if attacking a unit
 			if (AttackedUnit != null)
@@ -106,7 +108,7 @@ namespace Evolution.Characters
 			}
 		}
 
-		public override void UnitInRange(UnitBase unit)
+		public override void UnitInRange(CharacterBase unit)
 		{
 			base.UnitInRange(unit);
 
@@ -122,7 +124,7 @@ namespace Evolution.Characters
 		}
 
 
-		private UnitBase FindUnitToAttack()
+		private CharacterBase FindUnitToAttack()
 		{
 			return UnitsInRange.Where(x => !x.IsNpc || x is VillagerNpc)
 				.OrderBy(DistanceToUnit).FirstOrDefault();

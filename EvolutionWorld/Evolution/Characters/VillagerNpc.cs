@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Evolution.Characters
 {
-    public class VillagerNpc : UnitBase
+    public class VillagerNpc : CharacterBase
     {
 		public override int Range
 		{
@@ -25,12 +25,18 @@ namespace Evolution.Characters
 			get { return 50; }
 		}
 
-		public override void Ready(ActionType finishedAction)
+		protected override void ReadyInternal(ActionBase action)
 		{
-			//call the base first!
-			base.Ready(finishedAction);
-
 			bool actionTaken = false;
+
+            ActionType finishedAction = action.ActionType;
+
+			//call the base for actions that we don't handle
+            if (finishedAction != ActionType.Idle && finishedAction != ActionType.Move)
+            {
+                base.ReadyInternal(action);
+                return;
+            }
 
 			if (true)//!IsUnderAttack() && !IsAttacking() && !IsEnRoute())
 			{
@@ -71,6 +77,7 @@ namespace Evolution.Characters
 			if (!actionTaken)
 			{
 				Idle();
+                actionTaken = true;
 			}
 		}
 

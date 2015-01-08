@@ -26,15 +26,15 @@ namespace Evolution
 
 		//private int lastEnvironmentTickcount;
 
-		private readonly ConcurrentDictionary<UnitBase, ActionBase> _unitActionDict;
+		private readonly ConcurrentDictionary<CharacterBase, ActionBase> _unitActionDict;
 
-		private readonly ConcurrentDictionary<long, ConcurrentQueue<UnitBase>> _scheduledActionsDict;
+		private readonly ConcurrentDictionary<long, ConcurrentQueue<CharacterBase>> _scheduledActionsDict;
 
 		private readonly Map _map;
 
 		private readonly TimeKeeper _timeKeeper;
 
-		private readonly List<UnitBase> _characters;
+		private readonly List<CharacterBase> _characters;
 
 
 		#endregion private fields
@@ -51,11 +51,11 @@ namespace Evolution
 
 		public Engine()
 		{
-			_unitActionDict = new ConcurrentDictionary<UnitBase, ActionBase>();
-			_scheduledActionsDict = new ConcurrentDictionary<long, ConcurrentQueue<UnitBase>>();
+			_unitActionDict = new ConcurrentDictionary<CharacterBase, ActionBase>();
+			_scheduledActionsDict = new ConcurrentDictionary<long, ConcurrentQueue<CharacterBase>>();
 			_timeKeeper = new TimeKeeper();
 			_map = new Map();
-			_characters = new List<UnitBase>();
+			_characters = new List<CharacterBase>();
 
 
 			Logging = new Logging();
@@ -64,10 +64,10 @@ namespace Evolution
 		#endregion .ctor
 
 		#region just for testing
-		List<UnitBase> villagers;
+		List<CharacterBase> villagers;
 		public void PrintStats()
 		{
-			foreach (UnitBase villager in villagers)
+			foreach (CharacterBase villager in villagers)
 			{
 				Console.WriteLine("{0} {1}", villager.Location.X, villager.Location.Y);
 			}
@@ -92,8 +92,9 @@ namespace Evolution
 
 			_characters.Add(villager);
 
-			villager.EndMove(location);
-			villager.Ready(ActionType.Idle);
+			//villager.EndMove(location);
+            villager.Ready(new MoveAction { Location = location });
+			villager.Ready(new IdleAction());
 
 			return villager;
 		}
@@ -103,7 +104,7 @@ namespace Evolution
 		/// </summary>
 		public IEnumerable<VillagerNpc> CreateVillagers()
 		{
-			villagers = new List<UnitBase>();
+			villagers = new List<CharacterBase>();
 
 			for (int i = 0; i < 10; i++)
 			{
@@ -125,11 +126,11 @@ namespace Evolution
 				{
 					try
 					{
-						ConcurrentQueue<UnitBase> listOfActions;
+						ConcurrentQueue<CharacterBase> listOfActions;
 						if (_scheduledActionsDict.TryGetValue(tick, out listOfActions))
 						{
-							ActionBlock<UnitBase> actionBlock = new ActionBlock<UnitBase>(x => ActionHandler(x));
-							foreach (UnitBase unit in listOfActions)
+							ActionBlock<CharacterBase> actionBlock = new ActionBlock<CharacterBase>(x => ActionHandler(x));
+							foreach (CharacterBase unit in listOfActions)
 							{
 								actionBlock.Post(unit);
 							}
@@ -157,7 +158,7 @@ namespace Evolution
 
 		#region unit acttions
 
-		public bool ProcessIdle(UnitBase unit, int idleTicks)
+		public bool ProcessIdle(CharacterBase unit, int idleTicks)
 		{
 			if (_unitActionDict.ContainsKey(unit)) return false;
 
@@ -171,7 +172,7 @@ namespace Evolution
 			return true;
 		}
 
-		public bool ProcessMove(UnitBase unit, Location nextLeg)
+		public bool ProcessMove(CharacterBase unit, Location nextLeg)
 		{
 			Debug.WriteLineIf(unit.Id == 0, "Engine: ProcessMove");
 			if (_unitActionDict.ContainsKey(unit))
@@ -183,14 +184,14 @@ namespace Evolution
 			return ProcessMoveInternal(unit, nextLeg);
 		}
 
-		public void ProcessAttack(UnitBase attackignUnit, UnitBase attackedUnit)
+		public void ProcessAttack(CharacterBase attackignUnit, CharacterBase attackedUnit)
 		{
 			//TODO: check that the attacked unit is in range
 
 			throw new NotImplementedException();
 		}
 
-		public void CancelAllActions(UnitBase unit)
+		public void CancelAllActions(CharacterBase unit)
 		{
 			throw new NotImplementedException();
 		}
@@ -205,7 +206,7 @@ namespace Evolution
 		/// <param name="unit"></param>
 		/// <param name="nextLeg"></param>
 		/// <returns></returns>
-		private bool ProcessMoveInternal(UnitBase unit, Location nextLeg)
+		private bool ProcessMoveInternal(CharacterBase unit, Location nextLeg)
 		{
 			//check that the map is empty at the desired location
 			if (!_map.ReserveIfEmpty(nextLeg, unit)) return false;
@@ -223,7 +224,7 @@ namespace Evolution
 			return true;
 		}
 
-		private void ActionHandler(UnitBase unit)
+		private void ActionHandler(CharacterBase unit)
 		{
 			try
 			{
@@ -247,30 +248,30 @@ namespace Evolution
 			}
 		}
 
-		private void MoveActionHandler(UnitBase unit, MoveAction action)
+		private void MoveActionHandler(CharacterBase unit, MoveAction action)
 		{
 			Location oldLocation = unit.Location;
 			Location newLocation = action.Location;
 			_map.Move(unit, oldLocation, newLocation);
 
-			unit.EndMove(action.Location);
-			unit.Ready(ActionType.Move);
+			//unit.EndMove(action.Location);
+			unit.Ready(action);
 		}
 
-		private void IdleActionHandler(UnitBase unit, IdleAction action)
+		private void IdleActionHandler(CharacterBase unit, IdleAction action)
 		{
-			unit.Ready(action.ActionType);
+			unit.Ready(action);
 		}
 
-		private void AddAction(UnitBase unit, ActionBase action)
+		private void AddAction(CharacterBase unit, ActionBase action)
 		{
             if (action.Tick <= _timeKeeper.Tick)
             { }
 
 			_unitActionDict.TryAdd(unit, action);
 
-			ConcurrentQueue<UnitBase> actionList = _scheduledActionsDict
-				.GetOrAdd(action.Tick, new ConcurrentQueue<UnitBase>());
+			ConcurrentQueue<CharacterBase> actionList = _scheduledActionsDict
+				.GetOrAdd(action.Tick, new ConcurrentQueue<CharacterBase>());
 			actionList.Enqueue(unit);
 		}
 

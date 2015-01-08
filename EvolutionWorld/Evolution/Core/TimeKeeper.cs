@@ -10,6 +10,9 @@ namespace Evolution.Core
 {
 	class TimeKeeper
 	{
+        /// <summary>
+        /// Interval for ticks in milliseconds
+        /// </summary>
 		private const long TickTime = 10;
 
 		public delegate void TickDelegate(long tick);

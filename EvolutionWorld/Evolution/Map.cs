@@ -43,20 +43,20 @@ namespace Evolution
 			_objectIdDictionary = new Dictionary<object, MapIdentifier>();
 		}
 
-		public void Add(UnitBase unit, Location location)
+		public void Add(CharacterBase unit, Location location)
 		{
 			MapIdentifier identifier = _identifierPool.Get();
 			_objectIdDictionary.Add(unit, identifier);
 			_map[location.X, location.Y] = identifier.Id;
 		}
 
-		public void Move(UnitBase unit, Location oldLocation, Location newLocation)
+		public void Move(CharacterBase unit, Location oldLocation, Location newLocation)
 		{
 			_map[oldLocation.X, oldLocation.Y] = 0;
 			_map[newLocation.X, newLocation.Y] = _objectIdDictionary[unit].Id;
 		}
 
-		public void Remove(UnitBase unit, Location location)
+		public void Remove(CharacterBase unit, Location location)
 		{
 			_map[location.X, location.Y] = 0;
 		}
@@ -68,7 +68,7 @@ namespace Evolution
 			return _map[location.X, location.Y] == 0;
 		}
 
-		public bool ReserveIfEmpty(Location location, UnitBase reservationOwner)
+		public bool ReserveIfEmpty(Location location, CharacterBase reservationOwner)
 		{
 			//TODO: move to some constants if will keep it (see below)
 			const int RESERVED = 1;

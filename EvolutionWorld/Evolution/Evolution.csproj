@@ -51,6 +51,8 @@
     <Compile Include="Algorithms\PathFinder.cs" />
     <Compile Include="Algorithms\PathFinderFast.cs" />
     <Compile Include="Algorithms\PriorityQueueB.cs" />
+    <Compile Include="Characters\Tree.cs" />
+    <Compile Include="Characters\Unit.cs" />
     <Compile Include="Characters\SkeletonNpc.cs" />
     <Compile Include="Core\Logging\Logging.cs" />
     <Compile Include="Core\Logging\LogStatisticsType.cs" />
@@ -71,7 +73,7 @@
     <Compile Include="Map.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Random.cs" />
-    <Compile Include="Characters\UnitBase.cs" />
+    <Compile Include="Characters\CharacterBase.cs" />
     <Compile Include="Events\UnitEventArgs.cs" />
     <Compile Include="Events\UnitEndMoveEventArgs.cs" />
     <Compile Include="Events\UnitBeginMoveEventArgs.cs" />
